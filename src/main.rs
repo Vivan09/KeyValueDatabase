@@ -2,12 +2,14 @@ use std::io;
 
 use kvdb::{
     command::Command,
-    engine::{DbEngine, DbEngineError, Value}
+    engine::MemoryEngine,
+    errors::DbEngineError,
+    errors::LoggingEngine
 };
 
-fn main() {
+fn run_main_loop(mut engine: impl Engine){
+// fn run_main_loop(engine: &mut dyn Engine){
     let mut buffer = String::new();
-    let mut db_engine = DbEngine::new();
     loop {
         buffer.clear();
 
@@ -53,23 +55,23 @@ fn main() {
         match command {
             Command::EXIT => break,
             Command::PUT(key, value) =>{
-                db_engine.put(key, value);
+                engine.put(key, value);
                 println!("OK");
             }
             Command::GET(key) => {
-                match db_engine.get(&key){
+                match engine.get(&key){
                     Some(value) => println!("{value:?}"),
                     None => println!("None")
                 }
             }
             Command::DEL(key) => {
-                match db_engine.del(&key) {
+                match engine.del(&key) {
                     Some(value) => println!("Deleted: {value:?}"),
                     None => println!("None"),
                 }
             }
             Command::EXIST(key) => {
-                if db_engine.exist(&key) {
+                if engine.exist(&key) {
                     println!("Key exist");
                 }
                 else{
@@ -77,13 +79,13 @@ fn main() {
                 }
             }
             Command::LPUSH(key, value) => {
-                match db_engine.lpush(key, value){
+                match engine.lpush(key, value){
                     Ok(()) => println!("OK"),
                     Err(DbEngineError::WrongType) => println!("(error Wrong type operation!)"),
                 }
             }
             Command::LPOP(key) => {
-                match db_engine.lpop(&key){
+                match engine.lpop(&key){
                     Ok(Some(value)) => println!("{value}"),
                     Ok(None) => println!("None"),
                     Err(DbEngineError::WrongType) => println!("(error Wrong type operation!)"),
@@ -95,23 +97,34 @@ fn main() {
             Command::PING => println!("PONG"),
             Command::LIST => {
                 println!("LIST = ");
-                db_engine.list();
+                engine.list();
             }
             Command::COUNT => {
-                println!("count = {}", db_engine.count());
+                println!("count = {}", engine.count());
             }
             Command::DBSIZE => {
-                println!("Number of elements: {}", db_engine.dbsize())
+                println!("Number of elements: {}", engine.dbsize())
             }
             Command::FLUSHDB => {
-                db_engine.flushdb();
+                engine.flushdb();
                 println!("OK")
             }
             Command::MGET(keys) => {
-                for key in db_engine.mget(&keys) {
+                for key in engine.mget(&keys) {
                     match value{
                         Some(value) => println!("{value:?}");
                         None => println!("key mot present.")
+                    }
+                }
+            }
+            Command::KEYS(pattern) => {
+                let matched_keys = engine.keys(&pattern);
+                if matched_keys.is_empty() {
+                    println!("()")
+                }
+                else {
+                    for (int i, key) in matched_keys.iter.enumerate() {
+                        prinln!(i)
                     }
                 }
             }
@@ -120,3 +133,21 @@ fn main() {
         println!("{t}");
     }
 }
+
+fn main(){
+/* 
+    let use_loging=false;
+    let mut engine: Box<dyn Engine> = if use_loging {
+        Box::new(LoggingEngine::new(MemoryEngine::new()))
+    } else {
+        Box::new(MemoryEngine::new())
+    }
+
+    run_main_loop(engine.as_mut());
+*/
+    
+    let memmory_engine = MemoryEngine::new();
+    let logging_engine = LoggingEngine::new();
+    run_main_loop(engine);
+}
+
