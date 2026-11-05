@@ -80,3 +80,20 @@ impl Command{
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parse_commands() {
+        assert!(matches!(Command::parse("put a 5"), Some(Command::PUT(_, Value::Integer(5)))));
+        assert!(matches!(Command::parse("PUT a hello world"), Some(Command::PUT(_, Value::String(s))) if s == "hello world"));
+        assert!(matches!(Command::parse("ping"), Some(Command::PING)));
+        assert!(matches!(Command::parse("count"), Some(Command::COUNT)));
+        assert!(matches!(Command::parse("list"), Some(Command::LIST)));
+        assert!(matches!(Command::parse("foo"), Some(Command::Unknow(_))));
+        assert!(Command::parse("GET").is_none());
+        assert!(Command::parse("GET a b").is_none());
+    }
+}
