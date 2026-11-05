@@ -1,3 +1,8 @@
+pub mod memory_engine;
+pub mod log_engine;
+pub mod read_only_engine;
+pub mod file_engine;
+
 use crate::{errors::DbEngineError, types::Value};
 
 pub trait Engine{

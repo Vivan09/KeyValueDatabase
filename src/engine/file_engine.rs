@@ -99,7 +99,7 @@ impl <E: Engine> Engine for FileEngine<E> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::memory_engine::MemoryEngine;
+    use crate::engine::memory_engine::MemoryEngine;
 
     #[test]
     fn file_engine_restores_data() {

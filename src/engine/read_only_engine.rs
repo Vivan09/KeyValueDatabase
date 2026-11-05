@@ -54,7 +54,7 @@ impl <E: Engine> Engine for ReadOnlyEngine<E> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::memory_engine::MemoryEngine;
+    use crate::engine::memory_engine::MemoryEngine;
 
     #[test]
     fn read_only() {
