@@ -1,37 +1,35 @@
-use std::fmt::{self, Display, Formatter};
+use std::fmt;
 
 #[derive(Debug)]
-pub enum DbEngineError {
+pub enum DbEngineError{
     WrongType,
     ReadOnly,
     Io(std::io::Error),
     Parse(String),
 }
 
-impl Display for DbEngineError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+impl fmt::Display for DbEngineError{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result{
         match self {
-            DbEngineError::WrongType => {
-                write!(f, "WRONGTYPE Operation against a key holding the wrong kind of value")
-            }
-            DbEngineError::ReadOnly => write!(f, "READONLY You can't write against a read only database"),
-            DbEngineError::Io(err) => write!(f, "IO error: {err}"),
-            DbEngineError::Parse(msg) => write!(f, "PARSE error: {msg}"),
+            DbEngineError::WrongType => write!(f, "Wrong type operation!"),
+            DbEngineError::ReadOnly => write!(f, "Read only database!"),
+            DbEngineError::Io(e) => write!(f, "IO error: {e}"),
+            DbEngineError::Parse(line) => write!(f, "Cannot parse line: {line}"),
         }
     }
 }
 
-impl std::error::Error for DbEngineError {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+impl std::error::Error for DbEngineError{
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)>{
         match self {
-            DbEngineError::Io(err) => Some(err),
+            DbEngineError::Io(e) => Some(e),
             _ => None,
         }
     }
 }
 
-impl From<std::io::Error> for DbEngineError {
-    fn from(err: std::io::Error) -> Self {
-        DbEngineError::Io(err)
+impl From<std::io::Error> for DbEngineError{
+    fn from(e: std::io::Error) -> Self{
+        DbEngineError::Io(e)
     }
 }
