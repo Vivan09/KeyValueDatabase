@@ -1,3 +1,7 @@
+pub mod logging_engine;
+pub mod memmory_engine;git g
+pub mod readOnlyEngine;
+
 use std::collections::HashMap;
 use std::collections::VecDeque;
 
@@ -41,11 +45,11 @@ impl DbEngine for MemoryEngine{
         self.storage.contains_key(key)
     }
 
-    pub fn put(&mut self, key: String, value: Value) -> Option<Value> {
+    pub fn put(&mut self, key: String, value: Value) -> Result<Option<Value>, DbEngineError> {
         self.storage.insert(key, value)
     }
 
-    pub fn del(&mut self, key: &str) -> Option<Value> {
+    pub fn del(&mut self, key: &str) -> Result<Option<Value>, DbEngineError> {
         self.storage.remove(key)
     }
 
@@ -91,10 +95,9 @@ impl DbEngine for MemoryEngine{
         self.storage.len()
     }
 
-    pub fn flushdb (&mut self){
-        let size = self.storage.len();
+    pub fn flushdb (&mut self) -> Result<Option<Value>, DbEngineError>{
         self.storage.clear();
-        size
+        Ok(())
     }
 
     pub fn mget(&self, keys: &[String]) -> Vec<Option<&Value>> {
@@ -145,11 +148,11 @@ impl <E: Engine> for LoggingEngine {
         println!("[LOG] Exist key = {key}");
         self.inner_engine.exist(key)
     }
-    fn put(&mut self, key: String, value: Value) -> Option<Value> {
+    fn put(&mut self, key: String, value: Value) -> Result<Option<Value>, DbEngineError> {
         println!("[LOG] Put key = {key}");
         self.inner_engine.put(key, value)
     }
-    fn del(&mut self, key: &str) -> Option<Value> {
+    fn del(&mut self, key: &str) -> Result<Option<Value>, DbEngineError> {
         println!("[LOG] Del key = {key}");
         self.inner_engine.del(key)
     }
@@ -173,9 +176,10 @@ impl <E: Engine> for LoggingEngine {
         println!("[LOG] Dbsize");
         self.inner_engine.dbsize()
     }
-    fn flushdb(&mut self) {
+    fn flushdb(&mut self) -> Result<Option<Value>, DbEngineError> {
         println!("[LOG] Flushdb");
         self.inner_engine.flushdb()
+        Ok(())
     }
     fn mget(&self, keys: &[String]) -> Vec<Option<&Value>> {
         println!("[LOG] Mget keys count = {}", keys.len());
@@ -185,4 +189,19 @@ impl <E: Engine> for LoggingEngine {
         println!("[LOG] Keys pattern = {pattern}");
         self.inner_engine.keys(pattern)
     }
+}
+
+pub struct ReadOnlyEngine<E: Engine> {
+    inner_engine : E,
+
+}
+
+impl <E, Engine> ReadOnlyEngine<E> {
+    pub fn new(inner_engine: E) -> Self {
+        ReadOnlyEngine { inner_engine }
+    }
+}
+
+impl <E: Engine> Engine for ReadOnlyEngine<E>{
+
 }

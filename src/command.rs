@@ -1,7 +1,7 @@
 use crate::engine::Value;
 
 #[derive(Debug)]
-pub enum Command{
+pub enum Command<Stirng>{
     PUT(String, Value),
     GET(String),
     DEL(String),
@@ -15,7 +15,7 @@ pub enum Command{
     DBSIZE,
     FLUSHDB,
     MGET(Vec<Stirng>),
-    KEYS(Stirng),
+    KEYS(String),
     Unknow(String)
 }
 
@@ -59,7 +59,7 @@ impl Command{
                 Some(Command::FLUSHDB)
             },
             ("MGET", keys) if !keys.is_empty() => {
-                let keys_vec = keys.iter().map([key] k.to_string()).collect();
+                let keys_vec = keys.iter().map([keys]).collect();
                 Some(Command::MGET(keys_vec))
             },
             ("KEYS", [pattern]) => Some(Command::KEYS(pattern.to_string())),

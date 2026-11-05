@@ -147,7 +147,8 @@ fn main(){
 */
     
     let memmory_engine = MemoryEngine::new();
-    let logging_engine = LoggingEngine::new();
+    let readOnlyEngine = ReadOnlyEngine::new(memmory_engine)
+    let logging_engine = LoggingEngine::new(readOnlyEngine);
     run_main_loop(engine);
 }
 
