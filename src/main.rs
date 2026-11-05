@@ -9,7 +9,6 @@ use kvdb::{
     engine::read_only_engine::ReadOnlyEngine,
 };
 
-// fn run_main_loop(mut engine: impl Engine){
 fn run_main_loop(engine: &mut dyn Engine){
     let mut buffer = String::new();
     loop {
@@ -30,9 +29,6 @@ fn run_main_loop(engine: &mut dyn Engine){
             continue;
         }
 
-        //prinln("Vstup -> '{buffer}'");
-
-        // let command = match Command::parse(&buffer){
         let command = match Command::parse(trimmed){
             Some(cmd) => cmd,
             None => {
@@ -40,9 +36,6 @@ fn run_main_loop(engine: &mut dyn Engine){
                 continue;
             }
         };
-
-        //println!("Command => {command}");
-        //println!("Args => {args:?}");
 
         match command {
             Command::EXIT => break,
