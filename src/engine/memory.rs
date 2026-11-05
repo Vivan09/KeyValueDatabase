@@ -115,7 +115,6 @@ mod tests {
         assert_eq!(db.lpush("l".into(), "y".into()).unwrap(), 2);
         assert_eq!(db.lpop("l").unwrap(), Some("y".into()));
         assert_eq!(db.lpop("l").unwrap(), Some("x".into()));
-        // prazdny list sa zmaze
         assert!(!db.exist("l"));
         assert_eq!(db.lpop("l").unwrap(), None);
 

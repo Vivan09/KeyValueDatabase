@@ -9,7 +9,6 @@ pub enum Value {
 }
 
 impl Value {
-    /// Cislo sa ulozi ako `Integer`, vsetko ostatne ako `String`.
     pub fn parse(input: &str) -> Self {
         match input.parse::<i64>() {
             Ok(number) => Value::Integer(number),

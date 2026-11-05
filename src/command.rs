@@ -36,7 +36,6 @@ Commands:
   EXIT                    quit                    (alias: QUIT)";
 
 impl Command {
-    /// Rozparsuje jeden riadok. Pri chybe vrati spravu pre pouzivatela.
     pub fn parse(input: &str) -> Result<Self, String> {
         let mut parts = input.split_whitespace();
         let command = parts

@@ -2,7 +2,6 @@ use super::{DbResult, Engine};
 use crate::errors::DbEngineError;
 use crate::types::Value;
 
-/// Wrapper, ktory povoli len citanie. Kazdy zapis vrati `DbEngineError::ReadOnly`.
 pub struct ReadOnlyEngine<E: Engine> {
     inner: E,
 }

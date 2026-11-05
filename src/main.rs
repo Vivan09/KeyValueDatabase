@@ -63,7 +63,6 @@ fn build_engine(opts: &Options) -> Result<Box<dyn Engine>, String> {
     Ok(engine)
 }
 
-/// Vykona jeden prikaz. Vrati `false`, ked sa ma program ukoncit.
 fn execute(engine: &mut dyn Engine, command: Command, out: &mut impl Write) -> io::Result<bool> {
     match command {
         Command::EXIT => return Ok(false),

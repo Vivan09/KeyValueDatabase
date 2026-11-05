@@ -1,7 +1,6 @@
 use super::{DbResult, Engine};
 use crate::types::Value;
 
-/// Wrapper, ktory vypisuje kazdu operaciu na stderr a deleguje ju dalej.
 pub struct LoggingEngine<E: Engine> {
     inner: E,
 }

@@ -7,10 +7,6 @@ use crate::command::Command;
 use crate::errors::DbEngineError;
 use crate::types::Value;
 
-/// Perzistentny engine (append-only file).
-///
-/// Kazda uspesna zapisova operacia sa zapise ako riadok do suboru.
-/// Pri otvoreni sa subor prehra a stav sa obnovi do vnutorneho enginu.
 pub struct FileEngine<E: Engine> {
     inner: E,
     log_file: File,
@@ -106,7 +102,6 @@ impl<E: Engine> Engine for FileEngine<E> {
 
     fn flushdb(&mut self) -> DbResult<usize> {
         let removed = self.inner.flushdb()?;
-        // Po FLUSHDB nie je co prehravat - subor sa jednoducho vyprazdni.
         self.log_file.set_len(0)?;
         Ok(removed)
     }

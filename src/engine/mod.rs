@@ -21,11 +21,8 @@ pub trait Engine {
     fn lpush(&mut self, key: String, value: String) -> DbResult<usize>;
     fn lpop(&mut self, key: &str) -> DbResult<Option<String>>;
     fn dbsize(&self) -> usize;
-    /// Vymaze vsetko, vrati pocet zmazanych klucov.
     fn flushdb(&mut self) -> DbResult<usize>;
-    /// Vsetky zaznamy zoradene podla kluca.
     fn entries(&self) -> Vec<(&str, &Value)>;
-    /// Kluce zodpovedajuce glob vzoru (`*` a `?`), zoradene.
     fn keys(&self, pattern: &str) -> Vec<&str>;
 
     fn mget(&self, keys: &[String]) -> Vec<Option<&Value>> {
@@ -69,7 +66,6 @@ impl<E: Engine + ?Sized> Engine for Box<E> {
     }
 }
 
-/// Glob matching: `*` = lubovolny pocet znakov, `?` = prave jeden znak.
 pub fn glob_match(pattern: &str, text: &str) -> bool {
     let p: Vec<char> = pattern.chars().collect();
     let t: Vec<char> = text.chars().collect();

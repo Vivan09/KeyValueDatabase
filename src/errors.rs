@@ -2,13 +2,9 @@ use std::fmt::{self, Display, Formatter};
 
 #[derive(Debug)]
 pub enum DbEngineError {
-    /// Operacia nad hodnotou zleho typu (napr. LPUSH na string).
     WrongType,
-    /// Databaza je otvorena len na citanie.
     ReadOnly,
-    /// Chyba pri citani / zapise suboru.
     Io(std::io::Error),
-    /// Poskodeny riadok v AOF subore.
     Parse(String),
 }
 
