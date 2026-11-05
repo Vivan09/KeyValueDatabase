@@ -1,6 +1,7 @@
 use kvdb::{
     command::Command,
-    engine::{Engine, MemoryEngine},
+    engine::Engine,
+    memory_engine::MemoryEngine,
     errors::DbEngineError,
     file_engine::FileEngine,
     read_only_engine::ReadOnlyEngine,

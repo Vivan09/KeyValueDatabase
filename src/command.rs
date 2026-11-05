@@ -36,6 +36,9 @@ impl Command{
                 Some(Command::PUT(key.to_string(), value))
             },
             ("GET", [key]) => {
+                if args.len() != 1 {
+                    return None;
+                }
                 Some(Command::GET(key.to_string()))
             },
             ("DEL" | "DELETE", [key]) => {

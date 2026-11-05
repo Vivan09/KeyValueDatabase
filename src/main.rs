@@ -2,11 +2,14 @@ use std::io;
 
 use kvdb::{
     command::Command,
-    engine::{Engine, LoggingEngine, MemoryEngine},
+    engine::Engine,
+    memory_engine::MemoryEngine,
+    log_engine::LoggingEngine,
     file_engine::FileEngine,
     read_only_engine::ReadOnlyEngine,
 };
 
+// fn run_main_loop(mut engine: impl Engine){
 fn run_main_loop(engine: &mut dyn Engine){
     let mut buffer = String::new();
     loop {
@@ -27,6 +30,9 @@ fn run_main_loop(engine: &mut dyn Engine){
             continue;
         }
 
+        //prinln("Vstup -> '{buffer}'");
+
+        // let command = match Command::parse(&buffer){
         let command = match Command::parse(trimmed){
             Some(cmd) => cmd,
             None => {
@@ -34,6 +40,9 @@ fn run_main_loop(engine: &mut dyn Engine){
                 continue;
             }
         };
+
+        //println!("Command => {command}");
+        //println!("Args => {args:?}");
 
         match command {
             Command::EXIT => break,
@@ -134,15 +143,17 @@ fn main(){
         }
     }
 
+    let memmory_engine = MemoryEngine::new();
+
     let mut engine: Box<dyn Engine> = match path {
-        Some(path) => match FileEngine::open(&path, MemoryEngine::new()) {
+        Some(path) => match FileEngine::open(&path, memmory_engine) {
             Ok(file_engine) => Box::new(file_engine),
             Err(e) => {
                 eprintln!("Cannot open {path}: {e}");
                 return;
             }
         },
-        None => Box::new(MemoryEngine::new()),
+        None => Box::new(memmory_engine),
     };
 
     if read_only {
