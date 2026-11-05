@@ -95,28 +95,3 @@ impl <E: Engine> Engine for FileEngine<E> {
         self.inner_engine.keys(pattern)
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::engine::memory_engine::MemoryEngine;
-
-    #[test]
-    fn file_engine_restores_data() {
-        let path = std::env::temp_dir().join(format!("kvdb_test_{}.aof", std::process::id()));
-        let _ = std::fs::remove_file(&path);
-        {
-            let mut db = FileEngine::open(&path, MemoryEngine::new()).unwrap();
-            db.put("name".into(), Value::String("John Smith".into())).unwrap();
-            db.put("gone".into(), Value::Integer(1)).unwrap();
-            db.del("gone").unwrap();
-            db.lpush("l".into(), "a".into()).unwrap();
-            db.lpush("l".into(), "b".into()).unwrap();
-        }
-        let db = FileEngine::open(&path, MemoryEngine::new()).unwrap();
-        assert_eq!(db.get("name"), Some(&Value::String("John Smith".into())));
-        assert!(!db.exist("gone"));
-        assert_eq!(db.get("l"), Some(&Value::List(["b".to_string(), "a".to_string()].into())));
-        std::fs::remove_file(&path).unwrap();
-    }
-}

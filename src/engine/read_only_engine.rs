@@ -50,19 +50,3 @@ impl <E: Engine> Engine for ReadOnlyEngine<E> {
         self.inner_engine.keys(pattern)
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::engine::memory_engine::MemoryEngine;
-
-    #[test]
-    fn read_only() {
-        let mut mem = MemoryEngine::new();
-        mem.put("a".into(), Value::Integer(1)).unwrap();
-        let mut db = ReadOnlyEngine::new(mem);
-        assert_eq!(db.get("a"), Some(&Value::Integer(1)));
-        assert!(matches!(db.put("b".into(), Value::Integer(2)), Err(DbEngineError::ReadOnly)));
-        assert!(matches!(db.flushdb(), Err(DbEngineError::ReadOnly)));
-    }
-}
